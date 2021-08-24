@@ -1,0 +1,67 @@
+enabled: true
+
+image:
+  repository: openethereum/openethereum
+  tag: v3.1.0
+  pullPolicy: IfNotPresent
+
+network: goerli
+
+datadir: /data
+
+hostPort:
+  # When hostPort is enabled, the P2P discovery ports for TCP/UDP will be open on the node where
+  # the pod lives. As a result, you won't be able to run two pod instances on the same node.
+  # You need to configure your network firewall rule to allow port access.
+  enabled: true
+
+ports:
+  rpc: 8545
+  discovery: 30303
+  metrics: 3000
+
+# these will be merged with the above config values
+args: [
+  "--pruning=auto",
+  "--jsonrpc-interface=all",
+  "--metrics",
+  "--metrics-interface=all",
+  "--min-peers=25",
+  "--max-peers=50"
+]
+
+storage:
+  className: standard
+  accessModes: [ "ReadWriteOnce" ]
+  capacity: 300Gi
+
+servicemonitor:
+  enabled: false
+
+resources: {}
+    # We usually recommend not to specify default resources and to leave this as a conscious
+    # choice for the user. This also increases chances charts run on environments with little
+    # resources, such as Minikube. If you do want to specify resources, uncomment the following
+    # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+    # limits:
+    #   cpu: 100m
+    #   memory: 128Mi
+    # requests:
+    #   cpu: 100m
+    #   memory: 128Mi
+
+livenessProbe:
+  httpGet:
+    path: /metrics
+    port: metrics
+  initialDelaySeconds: 30
+  failureThreshold: 5
+  periodSeconds: 10
+
+readinessProbe:
+  httpGet:
+    path: /metrics
+    port: metrics
+  initialDelaySeconds: 30
+  failureThreshold: 5
+  periodSeconds: 10

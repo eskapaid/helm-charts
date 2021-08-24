@@ -1,0 +1,25 @@
+{{- $root := . }}
+{{- with .Values }}
+{{- if .enabled }}
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ $root.Release.Name }}
+  labels:
+    {{- include "openethereum.labels" $root | nindent 4 }}
+    app: {{ $root.Release.Name }}
+spec:
+  selector:
+    {{- include "openethereum.selectorLabels" $root | nindent 4 }}
+    app: {{ $root.Release.Name }}
+  ports:
+    - name: metrics
+      port: {{ .ports.metrics }}
+      protocol: TCP
+    - name: rpc
+      port: {{ .ports.rpc }}
+      protocol: TCP
+
+{{- end }}
+{{- end }}

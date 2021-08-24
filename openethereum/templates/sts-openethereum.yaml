@@ -1,0 +1,65 @@
+{{- $root := . }}
+{{- with .Values }}
+{{- if .enabled }}
+
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ $root.Release.Name }}
+  labels:
+    {{- include "openethereum.labels" $root | nindent 4 }}
+    app: {{ $root.Release.Name }}
+spec:
+  selector:
+    matchLabels:
+      {{- include "openethereum.selectorLabels" $root | nindent 6 }}
+      app: {{ $root.Release.Name }}
+  serviceName: {{ $root.Release.Name }}
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        {{- include "openethereum.selectorLabels" $root | nindent 8 }}
+        app: {{ $root.Release.Name }}
+    spec:
+      containers:
+        - name: openethereum
+          image: "{{ .image.repository }}:{{ .image.tag }}"
+          args:
+            {{- $args := concat .args (list "--base-path" .datadir) }}
+            {{- toYaml $args | nindent 12 }}
+          resources: 
+            {{ toYaml .resources | indent 12 }}
+          livenessProbe:
+            {{- toYaml .livenessProbe | nindent 12 }}
+          readinessProbe:
+            {{- toYaml .readinessProbe | nindent 12 }}
+          volumeMounts:
+            - name: data
+              mountPath: {{ .datadir }}
+          ports:
+            - name: rpc
+              containerPort: {{ .ports.rpc }}
+              protocol: TCP
+            - name: metrics
+              containerPort: {{ .ports.metrics }}
+              protocol: TCP
+            - name: discovery-tcp
+              containerPort: {{ .ports.discovery }}
+              protocol: TCP
+              {{- if .hostPort.enabled }}
+              hostPort: {{ .ports.discovery }}
+              {{- end }}
+            - name: discovery-udp
+              containerPort: {{ .ports.discovery }}
+              protocol: UDP
+              {{- if .hostPort.enabled }}
+              hostPort: {{ .ports.discovery }}
+              {{- end }}
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: {{ $root.Release.Name }}-data
+
+{{- end }}
+{{- end }}
