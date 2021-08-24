@@ -1,0 +1,18 @@
+{{- $root := . }}
+{{- with .Values }}
+{{- if .enabled }}
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ $root.Release.Name }}-data
+spec:
+  storageClassName: {{ .storage.className }}
+  accessModes: 
+    {{- toYaml .storage.accessModes | nindent 4 }}
+  resources:
+    requests:
+      storage: {{ .storage.capacity }}
+
+{{- end }}
+{{- end }}
