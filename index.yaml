@@ -11,6 +11,28 @@ entries:
     urls:
     - https://github.com/eskapaid/helm-charts/releases/download/geth-0.1.0/geth-0.1.0.tgz
     version: 0.1.0
+  lighthouse-beacon:
+  - apiVersion: v2
+    appVersion: 1.16.0
+    created: "2021-08-24T06:29:05.794342618Z"
+    description: A Helm chart for the Lighthouse Beacon Chain Client
+    digest: 4f33bc7ce0892002e25802449857fcf16ea3b1494fca91ba9ed98a84842cb7e8
+    name: lighthouse-beacon
+    type: application
+    urls:
+    - https://github.com/eskapaid/helm-charts/releases/download/lighthouse-beacon-1.1.0/lighthouse-beacon-1.1.0.tgz
+    version: 1.1.0
+  lighthouse-validator:
+  - apiVersion: v2
+    appVersion: 1.16.0
+    created: "2021-08-24T06:29:05.916215329Z"
+    description: A Helm chart for the Lighthouse Validator Client
+    digest: 70556427af1b4aed865572438a283d5659f6956944969bc23cef93c19f896735
+    name: lighthouse-validator
+    type: application
+    urls:
+    - https://github.com/eskapaid/helm-charts/releases/download/lighthouse-validator-1.1.1/lighthouse-validator-1.1.1.tgz
+    version: 1.1.1
   openethereum:
   - apiVersion: v2
     appVersion: 1.16.0
@@ -21,6 +43,28 @@ entries:
     type: application
     urls:
     - https://github.com/eskapaid/helm-charts/releases/download/openethereum-0.1.0/openethereum-0.1.0.tgz
+    version: 0.1.0
+  prysm-beacon:
+  - apiVersion: v2
+    appVersion: 1.16.0
+    created: "2021-08-24T06:29:06.034726333Z"
+    description: A Helm chart for the Prysmatic Beacon Chain Client
+    digest: 3d5b79cc807f9d00fd6f39305a1e049c097e5aec94edf2f77d2a2c75fc476f09
+    name: prysm-beacon
+    type: application
+    urls:
+    - https://github.com/eskapaid/helm-charts/releases/download/prysm-beacon-0.1.0/prysm-beacon-0.1.0.tgz
+    version: 0.1.0
+  prysm-validator:
+  - apiVersion: v2
+    appVersion: 1.16.0
+    created: "2021-08-24T06:29:06.219877213Z"
+    description: A Helm chart for the Prysmatic Validator Client
+    digest: 3a399e5b50d319f5ed56c8f22240a15b46c585e76ffa9b5c33bf9b2cd44bff68
+    name: prysm-validator
+    type: application
+    urls:
+    - https://github.com/eskapaid/helm-charts/releases/download/prysm-validator-0.1.0/prysm-validator-0.1.0.tgz
     version: 0.1.0
   rocketpool:
   - apiVersion: v2
@@ -38,4 +82,4 @@ entries:
     urls:
     - https://github.com/eskapaid/helm-charts/releases/download/rocketpool-1.1.2/rocketpool-1.1.2.tgz
     version: 1.1.2
-generated: "2021-08-24T06:25:09.990076344Z"
+generated: "2021-08-24T06:29:06.219886514Z"
