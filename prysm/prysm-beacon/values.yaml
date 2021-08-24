@@ -1,0 +1,62 @@
+image:
+  repository: gcr.io/prysmaticlabs/prysm/beacon-chain
+  tag: stable
+  pullPolicy: IfNotPresent
+
+containerArgs:
+  - --config-file
+  - /data/config/prysm-beacon.yaml
+
+hostPort:
+  # When hostPort is enabled, the P2P discovery ports for TCP/UDP will be open on the node where
+  # the pod lives. As a result, you won't be able to run two pod instances on the same node.
+  # You need to configure your network firewall rule to allow port access.
+  enabled: true
+
+ports:
+  discovery: 13000
+  metrics: 8080
+  rpc: 4000
+
+config:
+  datadir: /data
+  log-file: /data/beacon.log
+  verbosity: info
+
+storage:
+  capacity: 20Gi
+
+resources: {}
+    # We usually recommend not to specify default resources and to leave this as a conscious
+    # choice for the user. This also increases chances charts run on environments with little
+    # resources, such as Minikube. If you do want to specify resources, uncomment the following
+    # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+    # limits:
+    #   cpu: 500m
+    #   memory: 8Gi
+    # requests:
+    #   cpu: 300m
+    #   memory: 4Gi
+
+livenessProbe: {}
+  # httpGet:
+  #   path: /healthz
+  #   port: metrics
+  # failureThreshold: 60
+  # initialDelaySeconds: 600
+  # periodSeconds: 60
+  # timeoutSeconds: 5
+
+readinessProbe: {}
+  # httpGet:
+  #   path: /healthz
+  #   port: metrics
+  # failureThreshold: 3
+  # initialDelaySeconds: 60
+  # periodSeconds: 10
+  # timeoutSeconds: 5
+
+affinity: {}
+
+servicemonitor:
+  enabled: false

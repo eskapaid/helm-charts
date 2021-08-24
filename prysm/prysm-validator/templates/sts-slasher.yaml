@@ -1,0 +1,63 @@
+{{- if .Values.slasher.enabled }}
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ template "prysm-validator.fullname" . }}-slasher
+  labels:
+    {{- include "prysm-validator.labels" . | nindent 4 }}
+    app: {{ template "prysm-validator.name" . }}-slasher
+spec:
+  selector:
+    matchLabels:
+      app: {{ template "prysm-validator.name" . }}-slasher
+  serviceName: {{ include "prysm-validator.fullname" . }}-slasher
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        {{- include "prysm-validator.selectorLabels" . | nindent 8 }}
+        app: {{ template "prysm-validator.name" . }}-slasher
+    spec:
+      containers:
+        - name: {{ .Chart.Name }}-slasher
+          image: "{{ .Values.slasher.image.repository }}:{{ .Values.slasher.image.tag }}"
+          {{- if .Values.slasher.args }}
+          args:
+{{ toYaml .Values.slasher.args | indent 12 }}
+          {{- end }}
+          resources: 
+{{ toYaml .Values.slasher.resources | indent 12 }}
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: {{ .Values.slasher.ports.metrics }}
+            failureThreshold: 5
+            initialDelaySeconds: 5
+            periodSeconds: 60
+            timeoutSeconds: 30
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: {{ .Values.slasher.ports.metrics }}
+            failureThreshold: 5
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            timeoutSeconds: 10
+          volumeMounts:
+            - name: slasher-data
+              mountPath: /data
+          ports:
+            - name: metrics
+              containerPort: {{ .Values.slasher.ports.metrics | default 8082 }}
+            - name: rpc
+              containerPort: {{ .Values.slasher.ports.rpc  }}
+  volumeClaimTemplates:
+    - metadata:
+        name: slasher-data
+      spec:
+        accessModes: 
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: {{ .Values.slasher.storage.capacity }}
+{{- end }}

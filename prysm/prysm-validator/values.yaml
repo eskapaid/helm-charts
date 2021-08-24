@@ -1,0 +1,73 @@
+image:
+  repository: gcr.io/prysmaticlabs/prysm/validator
+  tag: stable
+
+containerArgs:
+  - --config-file
+  - /data/config/prysm-validator.yaml
+  - --accept-terms-of-use
+  - --pyrmont
+
+config:
+  datadir: /data
+  p2p-tcp-port: 13000
+  beacon-rpc-provider: prysm-beacon:4000
+  log-file: /data/validator.log
+  verbosity: info
+
+# A list of secrets and their paths to mount inside the initContainer
+# initContainer will copy these to /data/wallet to be available
+# in the main container
+secretMounts: []
+#  - name: keymanageropts
+#    secretName: keymanageropts
+#    mountPath: /data/mount/direct
+#  - name: keystore
+#    secretName: keystore
+#    mountPath: /data/mount/direct/accounts
+#  - name: password
+#    secretName: password
+#    mountPath: /data/mount/password
+
+storage:
+  capacity: 1Gi
+
+resources:
+  limits:
+    memory: 1Gi
+  requests:
+    memory: 1Gi
+
+servicemonitor:
+  enabled: false
+
+
+slasher:
+  enabled: false
+
+  image:
+    repository: gcr.io/prysmaticlabs/prysm/slasher
+    tag: stable
+    pullPolicy: IfNotPresent
+
+
+  args:
+    - --beacon-rpc-provider=prysm-beacon:4000
+    - --datadir=/data
+    - --rpc-host=0.0.0.0
+    - --monitoring-host=0.0.0.0
+
+  storage:
+    capacity: 3Gi
+
+  ports:
+    metrics: 8082
+    rpc: 4002
+
+  resources:
+    requests:
+      cpu: 50m
+      memory: 128Mi
+    limits:
+      cpu: 100m
+      memory: 256Mi

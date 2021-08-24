@@ -1,0 +1,83 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ template "prysm-validator.fullname" . }}
+  labels:
+    {{- include "prysm-validator.labels" . | nindent 4 }}
+    app: {{ template "prysm-validator.name" . }}
+spec:
+  selector:
+    matchLabels:
+    {{- include "prysm-validator.selectorLabels" . | nindent 6 }}
+  serviceName: {{ template "prysm-validator.fullname" . }}
+  replicas: 1
+  template:
+    metadata:
+      labels:
+      {{- include "prysm-validator.selectorLabels" . | nindent 8 }}
+    spec:
+      initContainers:
+        - name: setup
+          image: busybox
+          command:
+          - /bin/sh
+          - -c
+          - mkdir -p /data/wallet && cp -rL /data/mount/* /data/wallet/
+          volumeMounts:
+          - name: validator-data
+            mountPath: /data
+          {{- range .Values.secretMounts }}
+          - name: {{ .name }}
+            mountPath: {{ .mountPath }}
+          {{- end }}
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          {{- if .Values.containerArgs }}
+          args:
+{{ toYaml .Values.containerArgs | indent 12 }}
+          {{- end }}
+          resources: 
+{{ toYaml .Values.resources | indent 12 }}
+          livenessProbe:
+            failureThreshold: 60
+            httpGet:
+              path: /healthz
+              port: {{ (index .Values "config" "monitoring-port") | default 8080 }}
+            initialDelaySeconds: 60
+            periodSeconds: 60
+            timeoutSeconds: 5
+          volumeMounts:
+            - name: validator-data
+              mountPath: /data
+            {{- if .Values.config }}
+            - name: config
+              mountPath: /data/config
+            {{- end }}
+          ports:
+            - name: p2p-tcp
+              containerPort: {{ (index .Values "config" "p2p-tcp-port") | default 13000 }}
+            - name: p2p-udp
+              containerPort: {{ (index .Values "config" "p2p-udp-port") | default 12000 }}
+            - name: metrics
+              containerPort: {{ (index .Values "config" "metrics-port") | default 8081 }}
+      volumes:
+        {{- if .Values.config }}
+        - name: config
+          configMap:
+            name: {{ template "prysm-validator.fullname" . }}-config
+        {{- end }}
+        {{- range .Values.secretMounts }}
+        - name: {{ .name }}
+          secret:
+            secretName: {{ .secretName }}
+        {{- end }}
+  volumeClaimTemplates:
+    - metadata:
+        name: validator-data
+      spec:
+        accessModes: 
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: {{ .Values.storage.capacity }}

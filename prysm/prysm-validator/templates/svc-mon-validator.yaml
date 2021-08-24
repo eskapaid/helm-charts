@@ -1,0 +1,18 @@
+{{- if .Values.servicemonitor.enabled -}}
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: {{ template "prysm-validator.fullname" . }}
+  labels:
+    {{- include "prysm-validator.labels" . | nindent 4 }}
+    release: kube-prometheus-stack
+spec:
+  selector:
+    matchLabels:
+      app: {{ template "prysm-validator.name" . }}
+  endpoints:
+  - path: /metrics
+    port: metrics
+  namespaceSelector:
+    any: true
+  {{- end }}

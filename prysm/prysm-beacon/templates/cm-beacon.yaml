@@ -1,0 +1,9 @@
+{{- if .Values.config }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ template "prysm-beacon.fullname" . }}-config
+data:
+  prysm-beacon.yaml: |
+{{ toYaml .Values.config | indent 4 }}
+{{- end }}

@@ -1,0 +1,9 @@
+{{- if .Values.config }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ template "prysm-validator.fullname" . }}-config
+data:
+  prysm-validator.yaml: |
+{{ toYaml .Values.config | indent 4 }}
+{{- end }}
