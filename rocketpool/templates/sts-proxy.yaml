@@ -1,0 +1,58 @@
+{{- if .Values.eth1.proxy }}
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ include "rocketpool.fullname" . }}-proxy
+  labels:
+    smartnode: proxy
+    {{- include "rocketpool.labels" . | nindent 4 }}
+spec:
+  selector:
+    matchLabels:
+      smartnode: proxy
+      {{- include "rocketpool.selectorLabels" . | nindent 6 }}
+  serviceName: {{ include "rocketpool.fullname" . }}
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        smartnode: proxy
+        {{- include "rocketpool.selectorLabels" . | nindent 8 }}
+    spec:
+      containers:
+        - name: {{ .Chart.Name }}-proxy
+          image: "{{ .Values.proxy.image.repository }}:{{ .Values.proxy.image.tag }}"
+          command: [ "/go/bin/rocketpool-pow-proxy" ]
+          args:
+            - --httpPort
+            - "8545"
+            - --wsPort
+            - "8546"
+            - --network
+            - {{ .Values.eth1.network }}
+            - --projectId
+            - {{ .Values.eth1.infuraId }}
+            - --providerType
+            - "infura"
+          resources: 
+{{ toYaml .Values.resources | indent 12 }}
+          # livenessProbe:
+          #   httpGet:
+          #     path: /node/health
+          #     port: {{ .Values.ports.metrics }}
+          #   failureThreshold: 60
+          #   initialDelaySeconds: 600
+          #   periodSeconds: 60
+          #   timeoutSeconds: 5
+          # readinessProbe:
+          #   httpGet:
+          #     path: /node/health
+          #     port: {{ .Values.ports.metrics }}
+          #   failureThreshold: 3
+          #   initialDelaySeconds: 60
+          #   periodSeconds: 10
+          #   timeoutSeconds: 5
+          ports:
+            - name: proxy
+              containerPort: 8545
+{{- end }}

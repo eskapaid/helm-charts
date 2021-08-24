@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ include "rocketpool.fullname" . }}-data
+spec:
+  storageClassName: aws-efs
+  accessModes: 
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: {{ .Values.storage.capacity | quote }}

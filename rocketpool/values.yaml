@@ -1,0 +1,92 @@
+image:
+  repository: rocketpool/smartnode
+  tag: v1.0.0-beta.2
+  pullPolicy: IfNotPresent
+
+storageAddress: 0xd8Cd47263414aFEca62d6e2a3917d6600abDceB3
+rplFaucetAddress: 0x95D6b8E2106E3B30a72fC87e2B56ce15E37853F9
+oneInchOracleAddress: 0x4eDC966Df24264C9C817295a0753804EcC46Dd22
+rplTokenAddress: 0xb4efd85c19999d84251304bda99e90b92300bd93
+
+# has to be this right now
+datadir: /.rocketpool
+
+eth1:
+  network: goerli
+  provider: http://eth1:8545
+  wsProvider: ws://eth1:8546
+  infuraId: changeme
+  proxy: false
+
+eth2:
+  network: prater
+  # pick one or the other and set the provider accordingly
+  lighthouse: false
+  prysm: false
+  # specify without "http://" because Prysm doesn't use http
+  provider: eth2:8545
+
+storage:
+  capacity: 1Gi
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 256Mi
+  limits:
+    cpu: 200m
+    memory: 512Mi
+
+ports:
+  metrics: 5052
+
+metrics:
+  enabled: false
+  image:
+    repository: eskp/rocketpool-metrics
+    tag: latest
+    pullPolicy: IfNotPresent
+
+  resources:
+    requests:
+      cpu: 200m
+      memory: 256Mi
+    limits:
+      cpu: 300m
+      memory: 512Mi
+
+cli:
+  image:
+    repository: eskp/rocketpool-cli
+    tag: stable
+    pullPolicy: IfNotPresent
+
+  resources:
+    requests:
+      cpu: 50m
+      memory: 128Mi
+    limits:
+      cpu: 100m
+      memory: 256Mi
+
+proxy:
+  image:
+    repository: rocketpool/smartnode-pow-proxy
+    tag: v1.0.0-rc5
+    pullPolicy: IfNotPresent
+
+prysm:
+  image:
+    repository: gcr.io/prysmaticlabs/prysm/validator
+    tag: stable
+    pullPolicy: IfNotPresent
+
+  verbosity: info
+  graffiti: rocket-pool
+
+  ports:
+    metrics: 8081
+
+# Will create ServiceMonitor objects for Prometheus Operator
+servicemonitor:
+  enabled: false

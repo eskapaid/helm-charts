@@ -1,0 +1,20 @@
+{{- if .Values.eth1.proxy }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "rocketpool.fullname" . }}-proxy
+  labels:
+    smartnode: proxy
+    {{- include "rocketpool.labels" . | nindent 4 }}
+spec:
+  selector:
+    smartnode: proxy
+    {{- include "rocketpool.selectorLabels" . | nindent 4 }}
+  ports:
+    - name: http
+      port: 8545
+      protocol: TCP
+    - name: ws
+      port: 8546
+      protocol: TCP
+{{- end }}
