@@ -1,0 +1,26 @@
+{{- if .Values.service.enabled -}}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "lighthouse-beacon.fullname" . }}
+  labels:
+    {{- include "lighthouse-beacon.labels" . | nindent 4 }}
+    app: {{ template "lighthouse-beacon.name" . }}
+spec:
+  type: {{ .Values.service.type }}
+  selector:
+    {{- include "lighthouse-beacon.selectorLabels" . | nindent 4 }}
+  ports:
+    - name: http
+      port: {{ .Values.ports.http  }}
+      protocol: TCP
+    - name: metrics
+      port: {{ .Values.ports.metrics  }}
+      protocol: TCP
+    - name: discovery-tcp
+      port: {{ .Values.ports.discovery  }}
+      protocol: TCP
+    - name: discovery-udp
+      port: {{ .Values.ports.discovery  }}
+      protocol: UDP
+{{- end -}}

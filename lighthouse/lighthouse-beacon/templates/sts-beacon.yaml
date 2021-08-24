@@ -1,0 +1,110 @@
+{{- if .Values.enabled }}
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ include "lighthouse-beacon.fullname" . }}
+  labels:
+    {{- include "lighthouse-beacon.labels" . | nindent 4 }}
+spec:
+  selector:
+    matchLabels:
+      {{- include "lighthouse-beacon.selectorLabels" . | nindent 6 }}
+  serviceName: {{ include "lighthouse-beacon.fullname" . }}
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        {{- include "lighthouse-beacon.selectorLabels" . | nindent 8 }}
+    spec:
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          {{- if .Values.container.command }}
+          command:
+{{ toYaml .Values.container.command | indent 12 }}
+          {{- end }}
+          {{- if .Values.container.args }}
+          args:
+{{ toYaml .Values.container.args | indent 12 }}
+          {{- end }}
+          livenessProbe:
+            {{- toYaml .livenessProbe | nindent 12 }}
+          readinessProbe:
+            {{- toYaml .readinessProbe | nindent 12 }}
+          resources: 
+{{ toYaml .Values.resources | indent 12 }}
+          livenessProbe:
+            httpGet:
+              path: /metrics
+              port: {{ .Values.ports.metrics }}
+            failureThreshold: 60
+            initialDelaySeconds: 600
+            periodSeconds: 60
+            timeoutSeconds: 5
+          readinessProbe:
+            httpGet:
+              path: /metrics
+              port: {{ .Values.ports.metrics }}
+            failureThreshold: 3
+            initialDelaySeconds: 60
+            periodSeconds: 10
+            timeoutSeconds: 5
+          volumeMounts:
+            - name: beacon-data
+              mountPath: /data
+            {{- if .Values.config }}
+            - name: beacon-config
+              mountPath: /data/config
+            {{- end }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.ports.http }}
+              protocol: TCP
+            - name: metrics
+              containerPort: {{ .Values.ports.metrics }}
+              protocol: TCP
+            - name: discovery-tcp
+              containerPort: {{ .Values.ports.discovery }}
+              protocol: TCP
+              {{- if .Values.hostPort.enabled }}
+              hostPort: {{ .Values.ports.discovery }}
+              {{- end }}
+            - name: discovery-udp
+              containerPort: {{ .Values.ports.discovery }}
+              protocol: UDP
+              {{- if .Values.hostPort.enabled }}
+              hostPort: {{ .Values.ports.discovery }}
+              {{- end }}
+    {{- with .nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+    {{- with .affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+    {{- with .tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+      volumes:
+        {{- if .Values.config }}
+        - name: beacon-config
+          configMap:
+            name: beacon-config
+        {{- end }}
+    {{- with .Values.affinity }}
+      affinity:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+  volumeClaimTemplates:
+    - metadata:
+        name: beacon-data
+      spec:
+        accessModes: 
+          - "ReadWriteOnce"
+        resources:
+          requests:
+            storage: {{ .Values.storage.capacity | quote }}
+{{- end }}

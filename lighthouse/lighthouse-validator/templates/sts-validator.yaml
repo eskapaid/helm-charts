@@ -1,0 +1,106 @@
+{{- if .Values.enabled }}
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ include "lighthouse-validator.fullname" . }}
+  labels:
+    {{- include "lighthouse-validator.labels" . | nindent 4 }}
+spec:
+  selector:
+    matchLabels:
+      {{- include "lighthouse-validator.selectorLabels" . | nindent 6 }}
+  serviceName: {{ include "lighthouse-validator.fullname" . }}  
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        {{- include "lighthouse-validator.selectorLabels" . | nindent 8 }}
+    spec:
+      initContainers:
+        - name: copy-keystore
+          image: busybox
+          command: ["/bin/sh", "-c"]
+          args:
+          - |
+            set -e
+            cd {{ .Values.datadir }}/keystores/
+            echo "Importing keystores ..."
+            for name in *.json; do
+              echo "Importing ${name} ..."
+              mkdir -p {{ .Values.datadir }}/validators/imported/${name}
+              cp $name {{ .Values.datadir }}/validators/imported/${name}/voting-keystore.json
+              echo "Imported ${name}"
+            done
+          volumeMounts:
+          - name: validator-data
+            mountPath: {{ .Values.datadir }}
+          - name: keystores
+            mountPath: {{ .Values.datadir }}/keystores
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          {{- if .Values.container.command }}
+          command:
+{{ toYaml .Values.container.command | indent 12 }}
+          {{- end }}
+          {{- if .Values.container.args }}
+          args:
+{{ toYaml .Values.container.args | indent 12 }}
+          {{- end }}
+          livenessProbe:
+            {{- toYaml .livenessProbe | nindent 12 }}
+          readinessProbe:
+            {{- toYaml .readinessProbe | nindent 12 }}
+          resources: 
+{{ toYaml .Values.resources | indent 12 }}
+          volumeMounts:
+            - name: validator-data
+              mountPath: {{ .Values.datadir }}
+            - name: passwords
+              mountPath: {{ .Values.datadir }}/secrets
+              readOnly: true
+          ports:
+            - name: metrics
+              containerPort: {{ .Values.ports.metrics }}
+    {{- with .nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+    {{- with .affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+    {{- with .tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+      volumes:
+      - name: keystores
+        secret:
+          secretName: {{ .Values.keystoreSecretName }}
+      - name: passwords
+        secret:
+          secretName: {{ .Values.passwordSecretName }}
+      {{- if .Values.storage.emptyDir }}
+      - name: validator-data
+        emptyDir: {}
+      {{- end }}
+      {{- if .Values.storage.claim }}
+      - name: validator-data
+        persistentVolumeClaim:
+          claimName: {{ .Values.storage.claimName }}
+      {{- end }}
+  {{- if .Values.storage.persistent }}
+  volumeClaimTemplates:
+    - metadata:
+        name: validator-data
+      spec:
+        accessModes:
+          - "ReadWriteOnce"
+        resources:
+          requests:
+            storage: {{ .Values.storage.capacity | quote }}
+  {{- end }}
+
+{{- end }}

@@ -1,0 +1,18 @@
+{{- if .Values.servicemonitor.enabled -}}
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: {{ template "lighthouse-beacon.fullname" . }}
+  labels:
+    {{- include "lighthouse-beacon.labels" . | nindent 4 }}
+    release: kube-prometheus-stack
+spec:
+  selector:
+    matchLabels:
+      app: {{ template "lighthouse-beacon.name" . }}
+  endpoints:
+  - path: /metrics
+    port: metrics
+  namespaceSelector:
+    any: true
+{{- end }}

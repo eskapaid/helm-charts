@@ -1,0 +1,9 @@
+{{- if .Values.config }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "lighthouse-beacon.fullname" . }}-config
+data:
+  lighthouse-beacon.yaml: |
+{{ toYaml .Values.config | indent 4 }}
+{{- end }}

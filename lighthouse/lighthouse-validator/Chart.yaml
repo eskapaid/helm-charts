@@ -1,0 +1,8 @@
+---
+apiVersion: v2
+name: lighthouse-validator
+description: A Helm chart for the Lighthouse Validator Client
+
+type: application
+version: 1.1.1
+appVersion: 1.16.0

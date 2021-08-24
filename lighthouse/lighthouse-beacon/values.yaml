@@ -1,0 +1,77 @@
+enabled: true
+
+image:
+  repository: sigp/lighthouse
+  tag: stable
+  pullPolicy: IfNotPresent
+
+container:
+  command:
+    - lighthouse
+    - beacon
+  args:
+    - --datadir=/data
+    - --debug-level=info
+    - --network=pyrmont
+    - --staking
+    - --http-address=0.0.0.0
+    - --subscribe-all-subnets
+    - --import-all-attestations
+    - --metrics
+    - --metrics-address=0.0.0.0
+    - --eth1-endpoints=http://geth/,http://geth-backup/
+
+hostPort:
+  # When hostPort is enabled, the P2P discovery ports for TCP/UDP will be open on the node where
+  # the pod lives. As a result, you won't be able to run two pod instances on the same node.
+  # You need to configure your network firewall rule to allow port access.
+  enabled: true
+
+ports:
+  http: 5052
+  metrics: 5054
+  discovery: 9000
+
+storage:
+  capacity: 20Gi
+
+livenessProbe:
+  httpGet:
+    path: /metrics
+    port: metrics
+  initialDelaySeconds: 30
+  failureThreshold: 5
+  periodSeconds: 10
+
+readinessProbe:
+  httpGet:
+    path: /metrics
+    port: metrics
+  initialDelaySeconds: 30
+  failureThreshold: 5
+  periodSeconds: 10
+
+resources: {}
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  # requests:
+  #   cpu: 250m
+  #   memory: 2Gi
+  # limits:
+  #   cpu: 500m
+  #   memory: 3Gi
+
+service:
+  enabled: true
+  type: NodePort
+
+servicemonitor:
+  enabled: false
+
+affinity: {}
+
+nodeSelector: {}
+
+tolerations: []

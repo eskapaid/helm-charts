@@ -1,0 +1,17 @@
+{{- if .Values.service.enabled -}}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "lighthouse-validator.fullname" . }}
+  labels:
+    {{- include "lighthouse-validator.labels" . | nindent 4 }}
+    app: {{ template "lighthouse-validator.name" . }}
+spec:
+  type: {{ .Values.service.type }}
+  selector:
+    {{- include "lighthouse-validator.selectorLabels" . | nindent 4 }}
+  ports:
+    - name: metrics
+      port: {{ .Values.ports.metrics }}
+      protocol: TCP
+{{- end -}}
