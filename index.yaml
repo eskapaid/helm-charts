@@ -1,5 +1,16 @@
 apiVersion: v1
 entries:
+  geth:
+  - apiVersion: v2
+    appVersion: 1.16.0
+    created: "2021-08-24T06:25:09.990068644Z"
+    description: A Helm chart for Kubernetes
+    digest: 3f4c0aea426977c2554892634ed85a27a7f8e9e3006a43ceb440ce9be427b9b0
+    name: geth
+    type: application
+    urls:
+    - https://github.com/eskapaid/helm-charts/releases/download/geth-0.1.0/geth-0.1.0.tgz
+    version: 0.1.0
   openethereum:
   - apiVersion: v2
     appVersion: 1.16.0
@@ -27,4 +38,4 @@ entries:
     urls:
     - https://github.com/eskapaid/helm-charts/releases/download/rocketpool-1.1.2/rocketpool-1.1.2.tgz
     version: 1.1.2
-generated: "2021-08-24T06:24:23.648419829Z"
+generated: "2021-08-24T06:25:09.990076344Z"
