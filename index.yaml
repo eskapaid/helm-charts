@@ -79,6 +79,21 @@ entries:
   rocketpool:
   - apiVersion: v2
     appVersion: 1.16.0
+    created: "2021-09-02T06:35:20.910701099Z"
+    dependencies:
+    - condition: lighthouse-validator.enabled
+      name: lighthouse-validator
+      repository: https://eskapaid.github.io/helm-charts
+      version: ~1.1.2
+    description: A Helm chart for Kubernetes
+    digest: 9a58dddfb642c0815bb1098765c9aac678e370d8eba2b195cf77f5e6272173ad
+    name: rocketpool
+    type: application
+    urls:
+    - https://github.com/eskapaid/helm-charts/releases/download/rocketpool-1.1.4/rocketpool-1.1.4.tgz
+    version: 1.1.4
+  - apiVersion: v2
+    appVersion: 1.16.0
     created: "2021-08-24T06:46:30.546674331Z"
     dependencies:
     - condition: lighthouse-validator.enabled
@@ -107,4 +122,4 @@ entries:
     urls:
     - https://github.com/eskapaid/helm-charts/releases/download/rocketpool-1.1.2/rocketpool-1.1.2.tgz
     version: 1.1.2
-generated: "2021-09-02T04:58:32.099708112Z"
+generated: "2021-09-02T06:35:20.910722587Z"
