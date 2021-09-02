@@ -25,6 +25,16 @@ entries:
   lighthouse-validator:
   - apiVersion: v2
     appVersion: 1.16.0
+    created: "2021-09-02T06:44:44.753461749Z"
+    description: A Helm chart for the Lighthouse Validator Client
+    digest: 362ea9614479c2220e9346f94f6225b04cc76e6664dbe511f2736e4a69e3bad4
+    name: lighthouse-validator
+    type: application
+    urls:
+    - https://github.com/eskapaid/helm-charts/releases/download/lighthouse-validator-1.1.3/lighthouse-validator-1.1.3.tgz
+    version: 1.1.3
+  - apiVersion: v2
+    appVersion: 1.16.0
     created: "2021-09-02T04:58:32.09968331Z"
     description: A Helm chart for the Lighthouse Validator Client
     digest: de390dd5c1a2ad326287d1fd7882ed0d6a094fc4aa5d50824785bfff85e62f6f
@@ -79,6 +89,21 @@ entries:
   rocketpool:
   - apiVersion: v2
     appVersion: 1.16.0
+    created: "2021-09-02T06:44:44.874406525Z"
+    dependencies:
+    - condition: lighthouse-validator.enabled
+      name: lighthouse-validator
+      repository: https://eskapaid.github.io/helm-charts
+      version: 1.1.*
+    description: A Helm chart for Kubernetes
+    digest: 94c38610602bd3cae60ab29b13cfab3c231dbadb203009a022d4eaff29c7cd0c
+    name: rocketpool
+    type: application
+    urls:
+    - https://github.com/eskapaid/helm-charts/releases/download/rocketpool-1.1.5/rocketpool-1.1.5.tgz
+    version: 1.1.5
+  - apiVersion: v2
+    appVersion: 1.16.0
     created: "2021-09-02T06:35:20.910701099Z"
     dependencies:
     - condition: lighthouse-validator.enabled
@@ -122,4 +147,4 @@ entries:
     urls:
     - https://github.com/eskapaid/helm-charts/releases/download/rocketpool-1.1.2/rocketpool-1.1.2.tgz
     version: 1.1.2
-generated: "2021-09-02T06:35:20.910722587Z"
+generated: "2021-09-02T06:44:44.874438326Z"
