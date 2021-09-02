@@ -16,6 +16,7 @@ spec:
       labels:
         {{- include "lighthouse-validator.selectorLabels" . | nindent 8 }}
     spec:
+      {{- if .Values.importKeystore }}
       initContainers:
         - name: copy-keystore
           image: busybox
@@ -36,6 +37,7 @@ spec:
             mountPath: {{ .Values.datadir }}
           - name: keystores
             mountPath: {{ .Values.datadir }}/keystores
+      {{- end }}
       containers:
         - name: {{ .Chart.Name }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
@@ -76,12 +78,14 @@ spec:
         {{- toYaml . | nindent 8 }}
     {{- end }}
       volumes:
+      {{- if .Values.importKeystore }}
       - name: keystores
         secret:
           secretName: {{ .Values.keystoreSecretName }}
       - name: passwords
         secret:
           secretName: {{ .Values.passwordSecretName }}
+      {{- end }}
       {{- if .Values.storage.emptyDir }}
       - name: validator-data
         emptyDir: {}

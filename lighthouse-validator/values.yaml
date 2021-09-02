@@ -22,6 +22,7 @@ container:
 # ref: https://lighthouse-book.sigmaprime.io/validator-management.html?highlight=--secrets-dir#populating-the-validator_definitionsyml-file
 # Create these secrets with `kubectl` prior. See Readme.
 
+importKeystore: true
 keystoreSecretName: eth2-validator-keystore
 passwordSecretName: eth2-validator-password
 
