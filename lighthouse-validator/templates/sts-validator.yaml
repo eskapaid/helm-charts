@@ -59,9 +59,11 @@ spec:
           volumeMounts:
             - name: validator-data
               mountPath: {{ .Values.datadir }}
+            {{- if .Values.importKeystore }}
             - name: passwords
               mountPath: {{ .Values.datadir }}/secrets
               readOnly: true
+            {{- end }}
           ports:
             - name: metrics
               containerPort: {{ .Values.ports.metrics }}
