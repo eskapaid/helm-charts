@@ -32,6 +32,11 @@ ports:
   metrics: 5054
   discovery: 9000
 
+service:
+  enabled: true
+  type: NodePort
+  discovery: 30900
+
 storage:
   capacity: 20Gi
 
@@ -62,10 +67,6 @@ resources: {}
   # limits:
   #   cpu: 500m
   #   memory: 3Gi
-
-service:
-  enabled: true
-  type: NodePort
 
 servicemonitor:
   enabled: false

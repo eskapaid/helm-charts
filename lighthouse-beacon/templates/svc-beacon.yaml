@@ -20,7 +20,13 @@ spec:
     - name: discovery-tcp
       port: {{ .Values.ports.discovery  }}
       protocol: TCP
+      {{- if ( and (eq .Values.service.type "NodePort" ) (not (empty .Values.service.port)) ) }}
+      nodePort: {{ .Values.service.port  }}
+      {{- end -}}
     - name: discovery-udp
       port: {{ .Values.ports.discovery  }}
       protocol: UDP
+      {{- if ( and (eq .Values.service.type "NodePort" ) (not (empty .Values.service.port)) ) }}
+      nodePort: {{ .Values.service.port  }}
+      {{- end -}}
 {{- end -}}
