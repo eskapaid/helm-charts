@@ -14,6 +14,16 @@ entries:
   lighthouse-beacon:
   - apiVersion: v2
     appVersion: 1.16.0
+    created: "2021-10-15T06:57:04.722284549Z"
+    description: A Helm chart for the Lighthouse Beacon Chain Client
+    digest: 0d11dee10a9fe87171720b8a645621da8cee9e5b85549f841eb78d156ac34c65
+    name: lighthouse-beacon
+    type: application
+    urls:
+    - https://github.com/eskapaid/helm-charts/releases/download/lighthouse-beacon-1.1.1/lighthouse-beacon-1.1.1.tgz
+    version: 1.1.1
+  - apiVersion: v2
+    appVersion: 1.16.0
     created: "2021-08-24T06:29:05.794342618Z"
     description: A Helm chart for the Lighthouse Beacon Chain Client
     digest: 4f33bc7ce0892002e25802449857fcf16ea3b1494fca91ba9ed98a84842cb7e8
@@ -162,4 +172,4 @@ entries:
     urls:
     - https://github.com/eskapaid/helm-charts/releases/download/rocketpool-1.1.2/rocketpool-1.1.2.tgz
     version: 1.1.2
-generated: "2021-09-02T07:25:36.802677003Z"
+generated: "2021-10-15T06:57:04.722408149Z"
