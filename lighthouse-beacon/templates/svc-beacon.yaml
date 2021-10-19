@@ -7,7 +7,7 @@ metadata:
     {{- include "lighthouse-beacon.labels" . | nindent 4 }}
     app: {{ template "lighthouse-beacon.name" . }}
 spec:
-  type: {{ .Values.service.type }}
+  type: {{ required "K8s Service type is required!" .Values.service.type }}
   selector:
     {{- include "lighthouse-beacon.selectorLabels" . | nindent 4 }}
   ports:
@@ -15,18 +15,18 @@ spec:
       port: {{ .Values.ports.http  }}
       protocol: TCP
     - name: metrics
-      port: {{ .Values.ports.metrics  }}
+      port: {{ .Values.ports.metrics }}
       protocol: TCP
     - name: discovery-tcp
-      port: {{ .Values.ports.discovery  }}
+      port: {{ .Values.ports.discovery }}
       protocol: TCP
-      {{- if ( and (eq .Values.service.type "NodePort" ) (not (empty .Values.service.port)) ) }}
-      nodePort: {{ .Values.service.port  }}
-      {{- end -}}
+      {{- if ( and (eq .Values.service.type "NodePort" ) (not (empty .Values.service.discoveryPort)) ) }}
+      nodePort: {{ .Values.service.discoveryPort }}
+      {{- end }}
     - name: discovery-udp
-      port: {{ .Values.ports.discovery  }}
+      port: {{ .Values.ports.discovery }}
       protocol: UDP
-      {{- if ( and (eq .Values.service.type "NodePort" ) (not (empty .Values.service.port)) ) }}
-      nodePort: {{ .Values.service.port  }}
-      {{- end -}}
+      {{- if ( and (eq .Values.service.type "NodePort" ) (not (empty .Values.service.discoveryPort)) ) }}
+      nodePort: {{ .Values.service.discoveryPort }}
+      {{- end }}
 {{- end -}}

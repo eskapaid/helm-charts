@@ -35,7 +35,7 @@ ports:
 service:
   enabled: true
   type: NodePort
-  discovery: 30900
+  discoveryPort: 30900
 
 storage:
   capacity: 20Gi
