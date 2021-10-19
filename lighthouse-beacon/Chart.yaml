@@ -5,4 +5,4 @@ description: A Helm chart for the Lighthouse Beacon Chain Client
 
 type: application
 appVersion: 1.16.0
-version: 1.1.2
+version: 1.1.3
